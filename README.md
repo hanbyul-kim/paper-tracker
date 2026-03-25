@@ -34,9 +34,6 @@ The copied spreadsheet already contains the Apps Script code. You just need to d
 2. Click **Extensions > Apps Script**
    - You should see the `doPost` function already there. If not, copy the code from [`scripts/Code.gs`](scripts/Code.gs)
 3. Click **Deploy > New deployment**
-
-   ![Deploy menu](https://via.placeholder.com/1x1) <!-- TODO: add screenshot -->
-
 4. Click the gear icon (Select type) > **Web app**
 5. Fill in the deployment settings:
    - **Description**: anything (e.g., "paper-tracker")
@@ -45,8 +42,8 @@ The copied spreadsheet already contains the Apps Script code. You just need to d
 
 6. Click **Deploy**
 7. On first deploy, Google will ask you to authorize. Click **Authorize access**, then:
-   - If you see "Google hasn't verified this app", click **Advanced** > **Go to (project name) (unsafe)**
-   - Click **Allow**
+   - If you see **"Google hasn't verified this app"**, click **Advanced** > **Go to (project name) (unsafe)** > **Allow**
+   - This warning is normal for all personal Apps Script projects. It simply means the app hasn't gone through Google's OAuth verification process — it does NOT mean the code is dangerous. You can verify the code yourself in the Apps Script editor (it matches [`scripts/Code.gs`](scripts/Code.gs) exactly). The warning shows your own email because you are both the developer and the user.
 8. Copy the **Web app URL** (it looks like `https://script.google.com/macros/s/.../exec`)
 
 > **Tip:** If you ever update the Apps Script code, you must create a **new deployment** (Deploy > New deployment) for changes to take effect. Editing the code alone doesn't update the live web app.
