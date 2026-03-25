@@ -50,6 +50,13 @@ It's fine if the user doesn't provide all information. Just send whatever is ava
 
 **Language for summary/keywords:** When auto-generating `summary` or `keywords`, write them in the language specified by `summary_language` in config.json (e.g., `"ko"` → Korean, `"en"` → English). If the user explicitly provides these fields, use them as-is regardless of the config.
 
+**Summary style:** When auto-generating `summary`, optimize for spreadsheet readability.
+- Keep each sentence short and direct.
+- Split distinct points with newline characters so each point appears on its own line within the cell.
+- Do not add bullet markers, numbering, or Markdown formatting at the start of lines.
+- Prefer 2-4 short lines covering problem, approach, and main finding or contribution.
+- Avoid long paragraphs.
+
 ### 1-1. Auto-fill Paper Metadata (arxiv MCP server preferred)
 
 When the user provides only an arXiv URL/ID, DOI, or paper title, automatically supplement metadata using the following priority:
@@ -60,7 +67,7 @@ When the user provides only an arXiv URL/ID, DOI, or paper title, automatically 
   - Or if the arXiv ID is known, use `mcp__arxiv__read_paper` to read the full paper content and extract summary/keywords as well.
 - If only the paper title is available:
   - Search using `mcp__arxiv__search_papers` with query format `ti:"paper title"` to fetch metadata.
-- Information to extract: `title`, `author` (first author + et al.), `year`, `venue` (arXiv category or conference info), `keywords`, `summary`, `url` (for arXiv papers, convert `/abs/` to `/pdf/` so clicking goes directly to the PDF. e.g., `https://arxiv.org/pdf/2301.12345` — the title becomes a clickable hyperlink in the spreadsheet)
+- Information to extract: `title`, `author` (first author + et al.), `year`, `venue` (arXiv category or conference info), `keywords`, `summary`, `url` (for arXiv papers, convert `/abs/` to `/pdf/` so clicking goes directly to the PDF. e.g., `https://arxiv.org/pdf/2301.12345` — the title becomes a clickable hyperlink in the spreadsheet). Format auto-generated summaries using short lines separated by newline characters rather than a single paragraph.
 
 **Priority 2 (fallback): Direct web page parsing**
 - If the arxiv MCP server call fails or the paper is not on arXiv:

@@ -64,6 +64,12 @@ Create `config.json` in the skill directory (`~/.claude/skills/paper-tracker/`):
 - `sheet_name`: The exact name of your sheet tab (check the tab at the bottom of your spreadsheet)
 - `summary_language`: Language for auto-generated summaries and keywords (e.g., `"ko"` for Korean, `"en"` for English, `"ja"` for Japanese). Defaults to English if not set.
 
+Auto-generated `summary` values are intended for spreadsheet cells:
+- Keep sentences concise.
+- Separate key points with newline characters.
+- Do not prepend bullet markers or numbers.
+- Prefer 2-4 short lines instead of a paragraph.
+
 ### 4. (Optional) arxiv MCP Server
 
 For automatic metadata lookup from arXiv URLs/IDs, install the [arxiv MCP server](https://github.com/blazickjp/arxiv-mcp-server). Without it, you'll need to provide paper details manually.
