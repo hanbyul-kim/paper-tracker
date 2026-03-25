@@ -104,3 +104,7 @@ paper-tracker/
 │   └── Code.gs       # Google Apps Script source code
 └── README.md         # This file
 ```
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=hanbyul-kim/paper-tracker&type=Date)](https://star-history.com/#hanbyul-kim/paper-tracker&Date)
