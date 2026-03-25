@@ -13,8 +13,11 @@ Say things like "add this paper" or paste an arXiv URL, and Claude fills in the 
 
 ## Spreadsheet Columns
 
-| No. | Year | Author | Paper Title | Venue | Keywords | Summary | Prediction | Reflection |
-|-----|------|-----------------------|-------------|-------|----------|---------|------------|------------|
+| No. | Year | Author | Paper Title | Venue | Keywords | Summary | Prediction | Reflection | Created At | Updated At |
+|-----|------|--------|-------------|-------|----------|---------|------------|------------|------------|------------|
+
+- `Created At`: set automatically when a new paper is added
+- `Updated At`: refreshed automatically whenever that row is updated later
 
 ## Setup
 
@@ -33,6 +36,7 @@ The copied spreadsheet already contains the Apps Script code. You just need to d
 1. Open your copied spreadsheet
 2. Click **Extensions > Apps Script**
    - You should see the `doPost` function already there. If not, copy the code from [`scripts/Code.gs`](scripts/Code.gs)
+   - Before using the updated script, add two spreadsheet columns at the end: `Created At` (J) and `Updated At` (K)
 3. Click **Deploy > New deployment**
 4. Click the gear icon (Select type) > **Web app**
 5. Fill in the deployment settings:
@@ -47,6 +51,8 @@ The copied spreadsheet already contains the Apps Script code. You just need to d
 8. Copy the **Web app URL** (it looks like `https://script.google.com/macros/s/.../exec`)
 
 > **Tip:** If you ever update the Apps Script code, you must create a **new deployment** (Deploy > New deployment) for changes to take effect. Editing the code alone doesn't update the live web app.
+
+> **Timestamp behavior:** The Apps Script writes timestamps server-side. On insert, both `Created At` and `Updated At` are set. On later updates, only `Updated At` changes.
 
 ### 3. Configure the Skill
 

@@ -1,6 +1,7 @@
 function doPost(e) {
   var data = JSON.parse(e.postData.contents);
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(data.sheet);
+  var now = new Date();
   
   // Update action: modify specific fields in an existing row
   if (data.action === "update") {
@@ -42,6 +43,7 @@ function doPost(e) {
     if (data.reflection !== undefined) {
       sheet.getRange(row, 9).setValue(data.reflection); // Column I: Reflection
     }
+    sheet.getRange(row, 11).setValue(now);              // Column K: Updated At
     return ContentService
       .createTextOutput(JSON.stringify({status: "success", updated_row: row}))
       .setMimeType(ContentService.MimeType.JSON);
@@ -60,7 +62,9 @@ function doPost(e) {
     data.keywords || "",   // Column F: Keywords
     data.summary || "",    // Column G: Summary
     data.prediction || "", // Column H: Prediction
-    data.reflection || ""  // Column I: Reflection
+    data.reflection || "", // Column I: Reflection
+    now,                   // Column J: Created At
+    now                    // Column K: Updated At
   ]);
   
   var newRow = lastRow + 1;
@@ -78,4 +82,3 @@ function doPost(e) {
     .createTextOutput(JSON.stringify({status: "success", row: newRow}))
     .setMimeType(ContentService.MimeType.JSON);
 }
-
