@@ -10,6 +10,7 @@ Say things like "add this paper" or paste an arXiv URL, and Claude fills in the 
 - Auto-fills metadata from arXiv (title, authors, year, venue, keywords, summary)
 - Tracks predictions (before reading) and reflections (after reading)
 - Paper titles link directly to PDFs
+- Retrieves an existing paper row by row number
 
 ## Spreadsheet Columns
 
@@ -56,6 +57,8 @@ The copied spreadsheet already contains the Apps Script code. You just need to d
 
 > **Important:** When you make a copy of the reference spreadsheet, the Apps Script is copied only at that moment. Later changes to the original spreadsheet's Apps Script do not sync automatically to your copy. If you want the latest features or fixes, manually copy the latest code from [`scripts/Code.gs`](scripts/Code.gs) into your spreadsheet's Apps Script editor, then create a new deployment.
 
+> **Read API:** The Apps Script now supports row-based lookup. You can read an existing paper with either `GET ?action=get&sheet=Sheet1&row=12` or `POST {"action":"get","sheet":"Sheet1","row":12}`.
+
 ### 3. Configure the Skill
 
 Create `config.json` in the skill directory (`~/.claude/skills/paper-tracker/`):
@@ -88,6 +91,26 @@ For automatic metadata lookup from arXiv URLs/IDs, install the [arxiv MCP server
 > Add this paper - Attention Is All You Need, Vaswani et al., 2017, NeurIPS
 > Add paper arxiv.org/abs/2301.12345
 > I think this paper will show that attention alone can replace RNNs  (updates prediction)
+```
+
+Direct API examples:
+
+```bash
+curl -G "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL/exec" \
+  --data-urlencode "action=get" \
+  --data-urlencode "sheet=Sheet1" \
+  --data-urlencode "row=12"
+```
+
+```bash
+REDIRECT_URL=$(curl -s -o /dev/null -w '%{redirect_url}' -X POST \
+  "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL/exec" \
+  -H "Content-Type: text/plain" \
+  -d '{
+    "action": "get",
+    "sheet": "Sheet1",
+    "row": 12
+  }') && curl -s "$REDIRECT_URL"
 ```
 
 ## Installation

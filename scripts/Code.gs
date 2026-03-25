@@ -1,6 +1,21 @@
+function doGet(e) {
+  var params = e.parameter || {};
+  if (params.action !== "get") {
+    return ContentService
+      .createTextOutput(JSON.stringify({status: "error", message: 'unsupported action; use action="get"'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  return handleGetAction(params);
+}
+
 function doPost(e) {
   var data = JSON.parse(e.postData.contents);
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(data.sheet);
+  if (data.action === "get") {
+    return handleGetAction(data);
+  }
+
+  var sheet = getTargetSheet(data.sheet);
   var now = new Date();
   
   // Update action: modify specific fields in an existing row
@@ -81,4 +96,58 @@ function doPost(e) {
   return ContentService
     .createTextOutput(JSON.stringify({status: "success", row: newRow}))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function handleGetAction(data) {
+  var row = Number(data.row);
+  if (!row) {
+    return ContentService
+      .createTextOutput(JSON.stringify({status: "error", message: "row is required"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  var sheet = getTargetSheet(data.sheet);
+  var lastRow = sheet.getLastRow();
+  if (row < 2 || row > lastRow) {
+    return ContentService
+      .createTextOutput(JSON.stringify({status: "error", message: "row not found"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify({
+      status: "success",
+      row: row,
+      paper: getPaperRowData(sheet, row)
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function getTargetSheet(sheetName) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  if (!sheet) {
+    throw new Error('sheet not found: ' + sheetName);
+  }
+  return sheet;
+}
+
+function getPaperRowData(sheet, row) {
+  var values = sheet.getRange(row, 1, 1, 11).getDisplayValues()[0];
+  var titleCell = sheet.getRange(row, 4);
+  var richText = titleCell.getRichTextValue();
+
+  return {
+    no: values[0],
+    year: values[1],
+    author: values[2],
+    title: values[3],
+    url: richText ? richText.getLinkUrl() : null,
+    venue: values[4],
+    keywords: values[5],
+    summary: values[6],
+    prediction: values[7],
+    reflection: values[8],
+    created_at: values[9],
+    updated_at: values[10]
+  };
 }
