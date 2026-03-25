@@ -54,6 +54,8 @@ The copied spreadsheet already contains the Apps Script code. You just need to d
 
 > **Timestamp behavior:** The Apps Script writes timestamps server-side. On insert, both `Created At` and `Updated At` are set. On later updates, only `Updated At` changes.
 
+> **Important:** When you make a copy of the reference spreadsheet, the Apps Script is copied only at that moment. Later changes to the original spreadsheet's Apps Script do not sync automatically to your copy. If you want the latest features or fixes, manually copy the latest code from [`scripts/Code.gs`](scripts/Code.gs) into your spreadsheet's Apps Script editor, then create a new deployment.
+
 ### 3. Configure the Skill
 
 Create `config.json` in the skill directory (`~/.claude/skills/paper-tracker/`):
