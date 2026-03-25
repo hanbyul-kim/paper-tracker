@@ -1,9 +1,13 @@
 function doGet(e) {
   var params = e.parameter || {};
-  if (params.action !== "get") {
+  if (params.action !== "get" && params.action !== "find") {
     return ContentService
-      .createTextOutput(JSON.stringify({status: "error", message: 'unsupported action; use action="get"'}))
+      .createTextOutput(JSON.stringify({status: "error", message: 'unsupported action; use action="get" or action="find"'}))
       .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (params.action === "find") {
+    return handleFindAction(params);
   }
 
   return handleGetAction(params);
@@ -13,6 +17,9 @@ function doPost(e) {
   var data = JSON.parse(e.postData.contents);
   if (data.action === "get") {
     return handleGetAction(data);
+  }
+  if (data.action === "find") {
+    return handleFindAction(data);
   }
 
   var sheet = getTargetSheet(data.sheet);
@@ -123,6 +130,28 @@ function handleGetAction(data) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+function handleFindAction(data) {
+  var title = normalizeText(data.title);
+  if (!title) {
+    return ContentService
+      .createTextOutput(JSON.stringify({status: "error", message: "title is required"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  var sheet = getTargetSheet(data.sheet);
+  var partial = String(data.partial).toLowerCase() === "true";
+  var matches = findMatchingRowsByTitle(sheet, title, partial);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({
+      status: "success",
+      query: data.title,
+      match_count: matches.length,
+      matches: matches
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 function getTargetSheet(sheetName) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
   if (!sheet) {
@@ -150,4 +179,39 @@ function getPaperRowData(sheet, row) {
     created_at: values[9],
     updated_at: values[10]
   };
+}
+
+function findMatchingRowsByTitle(sheet, normalizedTitle, partial) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return [];
+  }
+
+  var titleValues = sheet.getRange(2, 4, lastRow - 1, 1).getDisplayValues();
+  var matches = [];
+
+  for (var i = 0; i < titleValues.length; i++) {
+    var currentTitle = normalizeText(titleValues[i][0]);
+    if (!currentTitle) {
+      continue;
+    }
+
+    var isMatch = partial
+      ? currentTitle.indexOf(normalizedTitle) !== -1
+      : currentTitle === normalizedTitle;
+
+    if (isMatch) {
+      var row = i + 2;
+      matches.push({
+        row: row,
+        paper: getPaperRowData(sheet, row)
+      });
+    }
+  }
+
+  return matches;
+}
+
+function normalizeText(value) {
+  return String(value || "").replace(/\s+/g, " ").trim().toLowerCase();
 }

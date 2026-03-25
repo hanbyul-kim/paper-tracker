@@ -11,6 +11,7 @@ Say things like "add this paper" or paste an arXiv URL, and Claude fills in the 
 - Tracks predictions (before reading) and reflections (after reading)
 - Paper titles link directly to PDFs
 - Retrieves an existing paper row by row number
+- Finds paper rows by title
 
 ## Spreadsheet Columns
 
@@ -57,7 +58,7 @@ The copied spreadsheet already contains the Apps Script code. You just need to d
 
 > **Important:** When you make a copy of the reference spreadsheet, the Apps Script is copied only at that moment. Later changes to the original spreadsheet's Apps Script do not sync automatically to your copy. If you want the latest features or fixes, manually copy the latest code from [`scripts/Code.gs`](scripts/Code.gs) into your spreadsheet's Apps Script editor, then create a new deployment.
 
-> **Read API:** The Apps Script now supports row-based lookup. You can read an existing paper with either `GET ?action=get&sheet=Sheet1&row=12` or `POST {"action":"get","sheet":"Sheet1","row":12}`.
+> **Read API:** The Apps Script now supports row-based lookup and title search. You can read an existing paper with either `GET ?action=get&sheet=Sheet1&row=12` or `POST {"action":"get","sheet":"Sheet1","row":12}`. You can also search by title with `action=find`.
 
 ### 3. Configure the Skill
 
@@ -103,6 +104,21 @@ curl -G "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL/exec" \
 ```
 
 ```bash
+curl -G "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL/exec" \
+  --data-urlencode "action=find" \
+  --data-urlencode "sheet=Sheet1" \
+  --data-urlencode "title=Attention Is All You Need"
+```
+
+```bash
+curl -G "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL/exec" \
+  --data-urlencode "action=find" \
+  --data-urlencode "sheet=Sheet1" \
+  --data-urlencode "title=attention" \
+  --data-urlencode "partial=true"
+```
+
+```bash
 REDIRECT_URL=$(curl -s -o /dev/null -w '%{redirect_url}' -X POST \
   "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL/exec" \
   -H "Content-Type: text/plain" \
@@ -110,6 +126,17 @@ REDIRECT_URL=$(curl -s -o /dev/null -w '%{redirect_url}' -X POST \
     "action": "get",
     "sheet": "Sheet1",
     "row": 12
+  }') && curl -s "$REDIRECT_URL"
+```
+
+```bash
+REDIRECT_URL=$(curl -s -o /dev/null -w '%{redirect_url}' -X POST \
+  "https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_URL/exec" \
+  -H "Content-Type: text/plain" \
+  -d '{
+    "action": "find",
+    "sheet": "Sheet1",
+    "title": "Attention Is All You Need"
   }') && curl -s "$REDIRECT_URL"
 ```
 
