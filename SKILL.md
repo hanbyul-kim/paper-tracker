@@ -51,7 +51,9 @@ When the user provides paper information in natural language, extract the follow
 
 It's fine if the user doesn't provide all information. Just send whatever is available.
 
-**Language for summary/keywords:** When auto-generating `summary` or `keywords`, write them in the language specified by `summary_language` in config.json (e.g., `"ko"` → Korean, `"en"` → English). If the user explicitly provides these fields, use them as-is regardless of the config.
+**Language for summary:** When auto-generating `summary`, write it in the language specified by `summary_language` in config.json (e.g., `"ko"` → Korean, `"en"` → English). If the user explicitly provides it, use as-is regardless of the config.
+
+**Language for keywords:** Always write `keywords` in English, regardless of `summary_language` config. Keywords serve as universal search terms across languages, so they must remain in English. If the user explicitly provides keywords in another language, translate them to English.
 
 **Summary style:** When auto-generating `summary`, optimize for spreadsheet readability.
 - Keep each sentence short and direct.
